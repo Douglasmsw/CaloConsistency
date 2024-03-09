@@ -35,6 +35,31 @@ sys.path.append(calo_challenge_dir)
 from CaloChallenge.code.XMLHandler import *
 from scripts.consts import *
 
+def ema_param_update(student_model, teacher_model, mu:float):
+    with torch.no_grad():
+        student_params_dict = student_model.state_dict()
+        teacher_params_dict = teacher_model.state_dict()
+        
+        param_names = list(student_params_dict.keys())
+
+        for name in param_names:
+            try: # update teacher model params as exponentiated moving average of student model params
+                student_param = student_params_dict[name]
+                teacher_param = teacher_params_dict[name]
+                teacher_params_dict[name] = mu * teacher_param + (1-mu) * student_param
+            except: raise Exception(f"{name} is found in teacher but not student params")
+
+        teacher_model.load_state_dict(teacher_params_dict)
+    return teacher_model
+
+def convert_n_to_t(n:torch.tensor, N:float, T:int = 400, rho:float = 7.,
+                    eps:int = 0, d:float = 1, discrete:bool = False):
+    e = eps**(1/rho)
+    max_out_ratio = (n-1) / (N-d)
+    t = ( e + max_out_ratio * ( (T-1)**(1/rho) - e) )**rho
+    if discrete is True: t = t.round().long()
+    return t
+
 def split_data_np(data, frac=0.8):
     np.random.shuffle(data)
     split = int(frac * data.shape[0])

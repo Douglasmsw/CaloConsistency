@@ -1,8 +1,4 @@
-d# CaloDiffusion official repository
-
-Repo for diffusion based calorimeter generation. Now includes pipelines to train and evaluate autoencoders and latent diffusion models for calorimeter generation.
-  
-Pytorch v1.9 was used to implement all models.
+This repo builds on the repo for latent diffusion models for diffusion simulation of calorimeter showers. It contains my work for my final project in my computer vision course, a summary of which can be seen in the report: https://github.com/Douglasmsw/CaloConsistency/blob/main/Computer_Vision_Final_Project.pdf
 
 
 # Data
